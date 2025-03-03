@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import date,datetime
-from app.models import Sale,Product,User,Company,Stock
+from app.models import Sale,Product,User,Company,Stock,StockTracker
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth import get_current_user
 from fastapi import HTTPException
@@ -176,8 +176,29 @@ def get_products_by_company(user:get_current_user,db:Session):
 
 
 def get_all_stock(user,db:Session):
-    all_stock_data = db.query(Stock).filter(Stock.company_id==user.company_id).all()
-    return all_stock_data
+    stock_data = db.query(Stock).filter(Stock.company_id==user.company_id).all()
+    stock_list =[]
+    for stock in stock_data:
+        stock_list.append({
+            "stock_id":stock.id,
+            "company_id":stock.company_id,
+            "product_id":stock.product_id,
+            "product_name":stock.product.name,
+            "stock_count":stock.stock_count
+        })
+    stock_track_data = db.query(StockTracker).filter(StockTracker.company_id==user.company_id).all()
+    stock_track_list =[]
+    for stock_track in stock_track_data:
+        formatted_created_at = stock_track.created_at.strftime("%H:%M: -> %d- %B -%Y")
+        stock_track_list.append({
+            "stock_tid":stock_track.id,
+            "company_id":stock_track.company_id,
+            "product_id":stock_track.product_id,
+            "stock_added":stock_track.stock_added,
+            "created_at":formatted_created_at
+        })
+    return{"stock_tracker_data":stock_track_list,"stock_data":stock_list}
+    
 
 def get_stock_metrics(user,db:Session):
     stock_metrics = db.query(Product.name,Stock.stock_count).join(Stock,Stock.product_id==Product.id).filter(Product.company_id==user.company_id).all()

@@ -59,18 +59,9 @@ def get_stock(user=Depends(get_current_user),db:Session=Depends(get_db)):
     if my_stock is None:
          raise HTTPException(status_code=404, detail="Stock not found")
     
-    stock_data =[]
-    for stock in my_stock:
-        formatted_created_at = stock.created_at.strftime("%H:%M: -> %d- %B -%Y")
-        stock_data.append({
-            "id":stock.id,
-            "cid":stock.company_id,
-            "product_id":stock.product_id,
-            "stock_count":stock.stock_count,
-            "created_at":formatted_created_at,
-        })
+    
 
-    return {"my_stock":stock_data}
+    return {"my_stock":my_stock}
 
 @router.get('/metrics',status_code=status.HTTP_200_OK)
 def get_stock_data(user=Depends(get_current_user),db:Session=Depends(get_db)):
