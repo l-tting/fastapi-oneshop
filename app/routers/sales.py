@@ -24,9 +24,12 @@ def make_sale(request: schemas.Sale, user=Depends(get_current_user), db: Session
         raise HTTPException(status_code=404, detail="Product not found under this company")
 
     stock = db.query(models.Stock).filter(models.Stock.product_id==request.pid).filter(models.Stock.company_id==user.company_id).first()
+    print("Testing stock",stock)
+    if not stock:
+        raise HTTPException(status_code=404,detail='No stock added yet')
 
     # Check if there is enough stock for the sale
-    if stock.stock_count < request.quantity:
+    if stock.stock_count < request.quantity :
         raise HTTPException(status_code=400, detail="Not enough stock available")
     
     #update stock with revised count
