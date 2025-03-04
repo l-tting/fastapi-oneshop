@@ -22,6 +22,9 @@ class UserLogin(BaseModel):
     email:str
     password:str
 
+class PasswordReset(BaseModel):
+    email:str
+
 class Product_Update(BaseModel):
     name: Optional[str] = None
     buying_price: Optional[float] = None
