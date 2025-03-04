@@ -42,3 +42,8 @@ def get_users(db: Session = Depends(get_db)):
     return {"users": users}
 
 
+@router.post('/reset_password',status_code=201)
+def reset_password(request:schemas.PasswordReset,db:Session=Depends(get_db)):
+    user_email = db.query(models.User).filter(models.User.email==request.email).first()
+
+
