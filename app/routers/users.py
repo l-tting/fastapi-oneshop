@@ -44,6 +44,25 @@ def get_users(db: Session = Depends(get_db)):
 
 @router.post('/reset_password',status_code=201)
 def reset_password(request:schemas.PasswordReset,db:Session=Depends(get_db)):
-    user_email = db.query(models.User).filter(models.User.email==request.email).first()
+    registered_user = db.query(models.User).filter(models.User.email==request.email).first()
+    if registered_user is None:
+        raise HTTPException(status_code=404,detail='User not found,please register')
+    if request.password != request.confirm_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Password don't match")
+    hashed_password = generate_password_hash(request.password)
+    registered_user.password = hashed_password
+    try:
+        db.commit()
+        db.refresh(registered_user)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Failed tto update password'
+        )
+    return {
+        "Message":"Password changed succesfully",
+        "user":registered_user.email
+            
+            }
 
 
