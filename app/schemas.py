@@ -24,6 +24,8 @@ class UserLogin(BaseModel):
 
 class PasswordReset(BaseModel):
     email:str
+    password:str
+    confirm_password:str
 
 class Product_Update(BaseModel):
     name: Optional[str] = None
