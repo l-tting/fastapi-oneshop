@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app import models, schemas,services
+from app.models import Subscription,Product
 from app.database import get_db
 from app.auth import get_current_user
 
@@ -9,8 +10,23 @@ router = APIRouter()
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def add_product(request: schemas.Product, user=Depends(get_current_user), db: Session = Depends(get_db)):
     
-    new_product = models.Product(company_id = user.company_id, name=request.name,
-                  buying_price=request.buying_price, selling_price=request.selling_price)
+    #get tier info to verify restrictions on posting products
+    subscription = db.query(Subscription.tier_id).filter(Subscription.company_id==user.company_id).first()
+    company_tier = subscription[0]
+
+    products = db.query(Product).filter(Product.company_id==user.company_id).all()
+    no_of_products = len(products)
+    
+    if company_tier ==1:
+        if no_of_products >=2:
+            raise HTTPException(status_code=403,detail="Unable to add more products, please upgrade plan")
+        
+    new_product = Product(
+        company_id = user.company_id, 
+        name=request.name,
+        buying_price=request.buying_price, 
+        selling_price=request.selling_price
+        )
     
     db.add(new_product)
     db.commit()
