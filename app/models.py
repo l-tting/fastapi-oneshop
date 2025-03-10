@@ -131,12 +131,19 @@ class Tier(Base):
     subscription = relationship('Subscription',back_populates='tier')
 
 
+class SubscriptionStatus(str, enum.Enum):
+    INACTIVE ='inactive',
+    ACTIVE = 'active'
+    EXPIRED = 'expired'
+    CANCELLED = 'cancelled'
+
 class Subscription(Base):
     __tablename__ = 'subscriptions'
     id = Column(Integer, primary_key=True, index=True)
     company_id = Column(Integer, ForeignKey('companies.id'))
     tier_id = Column(Integer, ForeignKey('tiers.id'))
-    transaction_code = Column(String, unique=True)
+    subscription_status = Column(Enum(SubscriptionStatus),name='subscription_status_enum', default=SubscriptionStatus.INACTIVE,nullable=False)
+    # transaction_code = Column(String, unique=True)
     created_at = Column(DateTime,server_default=func.now())
     company = relationship("Company",back_populates='subscription')
     tier = relationship("Tier",back_populates='subscription')

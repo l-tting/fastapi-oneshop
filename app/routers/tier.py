@@ -19,6 +19,15 @@ def add_a_tier(request:TierCreate,db:Session=Depends(get_db)):
 
     except Exception as e:
         raise HTTPException(status_code=500,detail=f'{e}')
+    
+@router.get('/')
+def get_my_tiers(db:Session=Depends(get_db)):
+
+    try:
+        tiers = db.query(Tier).all()
+        return {"tier_info":tiers}
+    except Exception as e:
+        raise HTTPException(status_code=500,detail=f'{e}')
 
 
 
