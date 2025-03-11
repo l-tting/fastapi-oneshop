@@ -20,6 +20,14 @@ def add_product(request: schemas.Product, user=Depends(get_current_user), db: Se
     if company_tier ==1:
         if no_of_products >=2:
             raise HTTPException(status_code=403,detail="Unable to add more products, please upgrade plan")
+    elif company_tier==2:
+        if no_of_products >=20:
+            raise HTTPException(status_code=403,detail='Unable to add more products, please upgrade plan')
+    elif company_tier ==3:
+        if no_of_products >=100:
+            raise HTTPException(status_code=403,detail='Please upgrade plan')
+    else:
+        raise HTTPException(status_code=404,detail='Invalid tier selected')
         
     new_product = Product(
         company_id = user.company_id, 
