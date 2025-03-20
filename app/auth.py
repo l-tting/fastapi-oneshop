@@ -102,3 +102,6 @@ def verify_refresh_token(refresh_token:str=Depends(get_refresh_token)):
     if not user:
         raise HTTPException(status_code=401, detail="User does not exist")
     
+#jjfjjfjjjjfjjfjj
+    def get_headers():
+        pass
