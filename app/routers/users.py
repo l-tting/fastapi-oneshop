@@ -5,6 +5,8 @@ from app import models, schemas
 from app.database import get_db
 from app.auth import create_access_token
 from datetime import timedelta
+from app.utils import generate_otp
+from routers.email import fm
 
 router = APIRouter()
 
@@ -47,6 +49,8 @@ def reset_password(request:schemas.PasswordReset,db:Session=Depends(get_db)):
     registered_user = db.query(models.User).filter(models.User.email==request.email).first()
     if registered_user is None:
         raise HTTPException(status_code=404,detail='User not found,please register')
+    
+    otp = generate_otp()
     if request.password != request.confirm_password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Password don't match")
     hashed_password = generate_password_hash(request.password)
