@@ -1,0 +1,29 @@
+name: Deploy FastAPI to DigitalOcean
+
+on:
+  push:
+    branches:
+      - master  # Runs the pipeline when code is pushed to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DIGITALOCEAN_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Deploy to DigitalOcean Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_IP }} << 'EOF'
+            cd /Users/la/f-r 7  # Change to your project directory
+            git pull origin master  # Pull latest code
+            docker compose down  # Stop running containers
+            docker compose up -d --build  # Rebuild and restart FastAPI
+          EOF
