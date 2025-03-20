@@ -22,7 +22,7 @@ jobs:
       - name: Deploy to DigitalOcean Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_IP }} << 'EOF'
-            cd /Users/la/f-r 7  # Change to your project directory
+            cd /Users/la/f-r-7  # Change to your project directory
             git pull origin master  # Pull latest code
             docker compose down  # Stop running containers
             docker compose up -d --build  # Rebuild and restart FastAPI
