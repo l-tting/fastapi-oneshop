@@ -3,7 +3,7 @@ name: Deploy FastAPI to DigitalOcean
 on:
   push:
     branches:
-      - master  # Trigger on push to master
+      - master # Use main if your repo uses main instead of master
 
 jobs:
   deploy:
@@ -22,10 +22,9 @@ jobs:
 
       - name: Deploy to DigitalOcean Server
         run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
-            root@${{ secrets.DIGITALOCEAN_IP }} << 'EOF'
-            cd /root/oneshop-api  # Navigate to FastAPI project directory
-            git pull origin master  # Pull latest changes
-            docker compose down  # Stop running containers
-            docker compose up -d --build  # Rebuild and restart FastAPI
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@${{ secrets.DIGITALOCEAN_IP }} << 'EOF'
+            cd /root/oneshop-api  # Change to correct project directory
+            git pull origin main  # Pull latest changes
+            docker-compose down  # Stop running containers
+            docker-compose up -d --build  # Restart FastAPI
           EOF
