@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to DigitalOcean Server
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
-            ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_IP }} << 'EOF'
+            root@${{ secrets.DIGITALOCEAN_IP }} << 'EOF'
             cd /root/oneshop-api  # Navigate to FastAPI project directory
             git pull origin master  # Pull latest changes
             docker compose down  # Stop running containers
