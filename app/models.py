@@ -148,3 +148,6 @@ class Subscription(Base):
     company = relationship("Company",back_populates='subscription')
     tier = relationship("Tier",back_populates='subscription')
 #status for subscription
+    
+class Test(Base):
+    pass
