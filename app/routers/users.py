@@ -69,4 +69,7 @@ def reset_password(request:schemas.PasswordReset,db:Session=Depends(get_db)):
             
             }
 
+def add_users():
+    pass
+
 
